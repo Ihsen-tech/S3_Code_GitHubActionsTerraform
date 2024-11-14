@@ -46,3 +46,19 @@ resource "azurerm_app_service" "website" {
     scm_type         = "LocalGit"
   }
 }
+
+resource "azurerm_log_analytics_workspace" "log" {
+  name                = "ihlag307-lg-analytics"
+  location            = data.azurerm_resource_group.wsdevops.location
+  resource_group_name = data.azurerm_resource_group.wsdevops.name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
+}
+
+resource "azurerm_application_insights" "appi" {
+  name                = "ihlag307-api"
+  location            = data.azurerm_resource_group.wsdevops.location
+  resource_group_name = data.azurerm_resource_group.wsdevops.name
+  workspace_id        = azurerm_log_analytics_workspace.log.id
+  application_type    = "web"
+}
